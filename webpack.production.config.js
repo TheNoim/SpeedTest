@@ -27,7 +27,8 @@ module.exports = {
       compressor: {
         warnings: false,
         screw_ie8: true
-      }
+      },
+      mangle: false
     }),
     new StatsPlugin('webpack.stats.json', {
       source: false,
@@ -39,18 +40,24 @@ module.exports = {
   ],
   module: {
     loaders: [{
-      test: /\.jsx?$/,
+      test: /\.js?$/,
       exclude: /node_modules/,
       loader: 'babel',
       query: {
-        "presets": ["es2015", "stage-0", "react"]
+        "presets": ["es2015"]
       }
     }, {
       test: /\.json?$/,
       loader: 'json'
     }, {
       test: /\.css$/,
-      loader: ExtractTextPlugin.extract('style', 'css?modules&localIdentName=[name]---[local]---[hash:base64:5]!postcss')
+      loader: ExtractTextPlugin.extract('style', 'css?modules&localIdentName=[local]!postcss')
+    }, {
+      test: /\.html$/,
+      loader: 'html-loader',
+      options: {
+        minimize: true
+      }
     }]
   },
   postcss: [
