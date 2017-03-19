@@ -6,8 +6,10 @@
     <title>Title</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>function global_define(ident, value){
+        (1,eval) ("var "+ident+"; (function(v){ "+ident+" = v })") (value) }</script>
   </head>
-  <body>
-
+  <body ng-app="SpeedTest" ng-controller="Main" ng-cloak style="height: 100vh;">
+    <ui-view class="bg"></ui-view>
   </body>
 </html>

@@ -1,0 +1,43 @@
+<div class="bg" layout="column" layout-align="center center">
+    <div flex="initial" style="width: 100%; min-height: 410px;" layout="row" layout-align="space-around center" layout-wrap>
+        <div style="min-height: 400px;">
+            <h2>Last Download</h2>
+            <div>
+                <div flex="initial" style="width: 95%; min-height: 200px;" class="ct-chart ct-perfect-fourth" id="LastDownloadChart"></div>
+            </div>
+        </div>
+        <div style="min-height: 400px;">
+            <h2>Last Ping</h2>
+            <h2>{{ LastPing }} ms</h2><br>
+            <h2>Last Test</h2>
+            <h2>{{ LastTest }}</h2>
+        </div>
+        <div style="min-height: 400px;">
+            <h1>Last Upload</h1>
+            <div>
+                <div flex="initial" style="width: 95%; min-height: 200px;" class="ct-chart ct-perfect-fourth" id="LastUploadChart"></div>
+            </div>
+        </div>
+    </div>
+    <h2>Download</h2>
+    <div layout-padding style="height: 500px; width: 100%" layout="column" layout-align="center center">
+        <div flex="initial" style="width: 95%; height: 500px;" class="ct-chart ct-perfect-fourth" id="DownloadChart"></div>
+    </div>
+    <h2>Upload</h2>
+    <div layout-padding style="height: 500px; width: 100%" layout="column" layout-align="center center">
+        <div flex="initial" style="width: 95%; height: 500px;" class="ct-chart ct-perfect-fourth" id="UploadChart"></div>
+    </div>
+    <h2>Ping</h2>
+    <div layout-padding style="height: 500px; width: 100%" layout="column" layout-align="center center">
+        <div flex="initial" style="width: 95%; height: 500px;" class="ct-chart ct-perfect-fourth" id="PingChart"></div>
+    </div>
+
+    <!--<h1>Upload</h1>-->
+    <!--<div>-->
+        <!--<canvas flex id="UploadChart"></canvas>-->
+    <!--</div>-->
+    <!--<h1>Ping</h1>-->
+    <!--<div>-->
+        <!--<canvas flex id="PingChart"></canvas>-->
+    <!--</div>-->
+</div>
