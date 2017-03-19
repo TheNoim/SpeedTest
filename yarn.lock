@@ -3115,6 +3115,10 @@ jstransform@~11.0.0:
     object-assign "^2.0.0"
     source-map "^0.4.2"
 
+jstz@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/jstz/-/jstz-1.0.9.tgz#e793ed659fe92f8fd0825e45b7207501e51c6c3f"
+
 kind-of@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.1.0.tgz#475d698a5e49ff5e53d14e3e732429dc8bf4cf47"
@@ -3632,6 +3636,10 @@ mocha@^2.3.3:
     mkdirp "0.5.1"
     supports-color "1.2.0"
     to-iso-string "0.0.2"
+
+moment@^2.18.0:
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.0.tgz#6cfec6a495eca915d02600a67020ed994937252c"
 
 ms@0.7.1:
   version "0.7.1"

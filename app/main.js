@@ -15,6 +15,8 @@ import "chartist-plugin-fill-donut";
 
 import io from 'socket.io-client';
 
+import moment from 'moment';
+
 const app = angular.module('SpeedTest', [ngMaterial, uiRouter]);
 
 app.controller('Main', function ($scope, Socket) {
@@ -182,7 +184,7 @@ app.controller('home', function ($scope, Socket, $rootScope, $state) {
                     offsetY : 10,
                     offsetX: -2
                 }, {
-                    content: '<h3>'+ Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].meta || 0 +'</h3>'
+                    content: '<h3 id="LastDownloadChartH3">'+ Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].meta || 0 +'</h3>'
                 }]
             })
         ],
@@ -204,13 +206,14 @@ app.controller('home', function ($scope, Socket, $rootScope, $state) {
                     offsetY : 10,
                     offsetX: -2
                 }, {
-                    content: '<h3>'+ Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].meta || 0 +'</h3>'
+                    content: '<h3 id="LastUploadChartH3">'+ Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].meta || 0 +'</h3>'
                 }]
             })
         ],
     });
     $scope.LastPing = Socket.Ping[Socket.Ping.length > 0 ? Socket.Ping.length - 1 : 0].value || 0;
-    $scope.LastTest = new Date(Socket.labels[Socket.labels.length > 0 ? Socket.labels.length - 1 : 0] || 0);
+    let d = new Date(Socket.labels[Socket.labels.length > 0 ? Socket.labels.length - 1 : 0] || 0);
+    $scope.LastTest = moment(d).format("DD MMM YYYY kk:mm");
     $scope.safeApply();
     $rootScope.$on('updateChart', () => {
         DLch.update({
@@ -242,11 +245,12 @@ app.controller('home', function ($scope, Socket, $rootScope, $state) {
                         offsetY : 10,
                         offsetX: -2
                     }, {
-                        content: '<h3>'+ Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].meta || 0 +'</h3>'
+                        content: '<h3 id="LastDownloadChartH3">'+ Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].meta || 0 +'</h3>'
                     }]
                 })
             ],
         });
+        document.getElementById('LastDownloadChartH3').innerHTML = Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].meta || 0;
         LastUploadChart.update({
             series: [Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].value || 0 ],
             labels: ['', '']
@@ -264,13 +268,15 @@ app.controller('home', function ($scope, Socket, $rootScope, $state) {
                         offsetY : 10,
                         offsetX: -2
                     }, {
-                        content: '<h3>'+ Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].meta || 0 +'</h3>'
+                        content: '<h3 id="LastUploadChartH3">'+ Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].meta || 0 +'</h3>'
                     }]
                 })
             ],
         });
+        document.getElementById('LastUploadChartH3').innerHTML = Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].meta || 0;
         $scope.LastPing = Socket.Ping[Socket.Ping.length > 0 ? Socket.Ping.length - 1 : 0].value || 0;
-        $scope.LastTest = new Date(Socket.labels[Socket.labels.length > 0 ? Socket.labels.length - 1 : 0] || 0);
+        let d = new Date(Socket.labels[Socket.labels.length > 0 ? Socket.labels.length - 1 : 0] || 0);
+        $scope.LastTest = moment(d).format("DD MMM YYYY kk:mm");
         $scope.safeApply();
         console.log("Chart updated.");
     });
@@ -310,43 +316,11 @@ function benchmark(method) {
     });
 }
 
-function ctPointLabels(options) {
-    return function ctPointLabels(chart) {
-        var defaultOptions = {
-            labelClass: 'ct-label',
-            labelOffset: {
-                x: 0,
-                y: -10
-            },
-            textAnchor: 'middle'
-        };
-
-        options = Chartist.extend({}, defaultOptions, options);
-
-        if(chart instanceof Chartist.Line) {
-            chart.on('draw', function(data) {
-                if(data.type === 'point') {
-                    data.group.elem('text', {
-                        x: data.x + options.labelOffset.x,
-                        y: data.y + options.labelOffset.y,
-                        style: 'text-anchor: ' + options.textAnchor
-                    }, options.labelClass).text(data.meta);
-                }
-            });
-        }
-    }
-}
 
 Array.prototype.sortByDateGetBiggerGerman = function () {
     return this.sort(function (a, b) {
-        if (parseDate(a.createdAt).getTime() > parseDate(b.createdAt).getTime()) return 1;
-        if (parseDate(a.createdAt).getTime() < parseDate(b.createdAt).getTime()) return -1;
+        if (new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime()) return 1;
+        if (new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime()) return -1;
         return 0;
     });
 };
-
-function parseDate(input) {
-    var parts = input.match(/(\d+)/g);
-    // note parts[1]-1
-    return new Date(parts[2], parts[1]-1, parts[0]);
-}

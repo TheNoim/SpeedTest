@@ -1,0 +1,5 @@
+{
+  "command": "/path/to/speedtest-cli", // Default just speedtest-cli
+  "interval": 60000 // Default 5 * 60 * 1000 = 5min
+  // Btw you need to remove the comments and rename the file to config.json
+}

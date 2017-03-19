@@ -36,6 +36,12 @@ const ioError = require('debug')('IO:error');
 
 const speedTest = require('speedtest-net');
 
+try {
+    const config = require('./config.json');
+} catch (e) {
+    console.log("No config. Ignore this shit if it works.");
+}
+
 const uuid = require('node-uuid');
 
 const TaskError = require('debug')('Task:error');
@@ -79,7 +85,7 @@ function test() {
         createdAt: new Date(),
         finished: false
     }).then(() => {
-        return SpeedTestCLIWrapper.test().then(result => {
+        return SpeedTestCLIWrapper.test(config.command).then(result => {
             TaskDebug(`Test (${id}) finished. Result: ${result.ping} | ${result.download} | ${result.upload} => Add to database`);
             return db.get(id).then(doc => {
                 doc.download = result.download;
@@ -108,7 +114,7 @@ function test() {
 }
 setInterval(function () {
     test();
-}, 5 * 60 * 1000);
+}, config.interval || 1 * 60 * 1000);
 test();
 io.on('connection', function (client) {
     ioDebug(`New client with id ${client.conn.id}`);
