@@ -11,6 +11,7 @@ pip install speedtest-cli
 npm install
 npm run build
 npm run start-p
+// Now wait until the first speedtest finished
 ```
 
 Webinterface is running on port 3000 and realtime api on port 3001.
