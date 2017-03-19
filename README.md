@@ -2,6 +2,8 @@
 This tool does every 5 minutes a speedtest and add it to a database.  
 You can seed the results in a webinterface which updates itself in realtime.
 
+![Screenshot webinterface](screenshot.png?raw=true "Screenshot webinterface")
+
 #### NOTE: Requires nodejs (+npm) and python (+pip)
 
 ```bash
