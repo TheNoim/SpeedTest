@@ -114,7 +114,7 @@ function test() {
 }
 setInterval(function () {
     test();
-}, config.interval || 1 * 60 * 1000);
+}, config.interval || 5 * 60 * 1000);
 test();
 io.on('connection', function (client) {
     ioDebug(`New client with id ${client.conn.id}`);
