@@ -1,73 +1,19 @@
-<div class="bg" layout="column" layout-align="center center">
-    <div flex="initial" style="width: 100%; min-height: 300px;" layout="row" layout-align="space-around center"
-         layout-wrap>
-        <div style="min-height: 300px;">
-            <h2>Last Download</h2>
-            <div>
-                <div flex="initial" style="width: 95%; min-height: 200px;" class="ct-chart ct-perfect-fourth"
-                     id="LastDownloadChart"></div>
-            </div>
-        </div>
-        <div style="min-height: 300px;">
-            <h2>Last Ping</h2>
-            <h2>{{ LastPing }} ms</h2><br>
-            <h2>Last Test</h2>
-            <h2>{{ LastTest }}</h2>
-        </div>
-        <div style="min-height: 300px;">
-            <h2>Last Upload</h2>
-            <div>
-                <div flex="initial" style="width: 95%; min-height: 200px;" class="ct-chart ct-perfect-fourth"
-                     id="LastUploadChart"></div>
-            </div>
-        </div>
+<div class="bg" layout="column" layout-align="center center" layout-padding>
+    <h1>Last Test</h1>
+    <h6>{{ LastDate }}</h6>
+    <div flex="initial" style="width: 90%" layout="row" layout-align="space-between center" layout-wrap>
+        <div id="LastDownloadGauge"></div>
+        <div id="LastUploadGauge"></div>
+        <div id="LastPingGauge"></div>
     </div>
-    <div flex="initial" style="width: 100%; min-height: 300px;" layout="row" layout-align="space-around center"
-         layout-wrap>
-        <div style="min-height: 300px;">
-            <h2>AVG Download</h2>
-            <div>
-                <div flex="initial" style="width: 95%; min-height: 200px;" class="ct-chart ct-perfect-fourth"
-                     id="AVGDownloadChart"></div>
-            </div>
-        </div>
-        <div style="min-height: 300px;">
-            <h2>AVG Ping: </h2>
-            <h2>{{ AVGPing }} ms</h2><br>
-        </div>
-        <div style="min-height: 300px;">
-            <h2>AVG Upload</h2>
-            <div>
-                <div flex="initial" style="width: 95%; min-height: 200px;" class="ct-chart ct-perfect-fourth"
-                     id="AVGUploadChart"></div>
-            </div>
-        </div>
+    <h1>All Data</h1>
+    <div flex="auto" style="width: 100%; min-height: 350px;">
+        <div id="DLChart" style="width: 100%; height: 350px!important;"></div>
     </div>
-    <div layout="row" layout-align="space-between center" layout-wrap style="width: 100%">
-        <span flex="30"></span>
-        <div flex="30" layout="row" layout-align="center center"><h2>Download</h2></div>
-        <div flex="30" layout="row" layout-align="end center">
-            <md-menu>
-                <md-button class="md-icon-button" style="margin-right: 15%" ng-click="openMenu($mdMenu, $event)">
-                    <md-icon>settings</md-icon>
-                </md-button>
-                <md-menu-content width="4">
-
-                </md-menu-content>
-            </md-menu>
-        </div>
+    <div flex="auto" style="width: 100%; min-height: 350px;">
+        <div id="UPChart" style="width: 100%; height: 350px!important;"></div>
     </div>
-    <div layout-padding style="height: 500px; width: 100%" layout="column" layout-align="center center">
-        <div flex="initial" style="width: 95%; height: 500px;" class="ct-chart ct-perfect-fourth"
-             id="DownloadChart"></div>
-    </div>
-    <h2>Upload</h2>
-    <div layout-padding style="height: 500px; width: 100%" layout="column" layout-align="center center">
-        <div flex="initial" style="width: 95%; height: 500px;" class="ct-chart ct-perfect-fourth"
-             id="UploadChart"></div>
-    </div>
-    <h2>Ping</h2>
-    <div layout-padding style="height: 500px; width: 100%" layout="column" layout-align="center center">
-        <div flex="initial" style="width: 95%; height: 500px;" class="ct-chart ct-perfect-fourth" id="PingChart"></div>
+    <div flex="auto" style="width: 100%; min-height: 350px;">
+        <div id="PIChart" style="width: 100%; height: 350px!important;"></div>
     </div>
 </div>

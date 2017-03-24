@@ -5,13 +5,7 @@ import angular from 'angular';
 import ngMaterial from 'angular-material';
 import uiRouter from 'angular-ui-router';
 
-import Chartist from 'chartist';
-
-import 'chartist/dist/chartist.min.css';
-
 import "angular-material/angular-material.min.css";
-
-import "chartist-plugin-fill-donut";
 
 import io from 'socket.io-client';
 
@@ -59,8 +53,11 @@ app.service('Socket', function ($rootScope, $mdToast) {
         _this.FinishedSpeedTests = _this.FinishedSpeedTests.sortByDateGetBiggerGerman();
         console.log(payload);
         console.log(_this.FinishedSpeedTests);
-        this.makeChartData();
-        $rootScope.$emit('AllData');
+        google.charts.load('current', {'packages': ['line', 'gauge']});
+        google.charts.setOnLoadCallback(() => {
+            _this.makeChartData();
+            $rootScope.$emit('AllData');
+        });
     });
     this.ChartData = [];
     this.updateChart = function () {
@@ -70,44 +67,109 @@ app.service('Socket', function ($rootScope, $mdToast) {
         $rootScope.$emit('createChart');
     };
     this.makeChartData = function () {
-        const labels = [];
-        const Upload = [];
-        const Download = [];
-        let DownloadAVG = 0;
-        let UploadAVG = 0;
-        let PingAVG = 0;
-        const Ping = [];
-        for (let i = 0; i < this.FinishedSpeedTests.length; i++) {
-            Upload.push({
-                meta: this.FinishedSpeedTests[i].upload,
-                value: (this.FinishedSpeedTests[i].uploadBytes / (1024*1024)).toFixed(2),
-                org: this.FinishedSpeedTests[i].uploadBytes
-            });
-            Download.push({
-                meta: this.FinishedSpeedTests[i].download,
-                value: (this.FinishedSpeedTests[i].downloadBytes / (1024*1024)).toFixed(2),
-                org: this.FinishedSpeedTests[i].downloadBytes
-            });
-            Ping.push({
-                meta: this.FinishedSpeedTests[i].ping,
-                value: this.FinishedSpeedTests[i].ping
-            });
-            const d = new Date(this.FinishedSpeedTests[i].createdAt);
-            //labels.push(`${d.getHours() < 10 ? "0" + d.getHours() : d.getHours()}:${d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()}`);
-            labels.push(d.getTime());
-            DownloadAVG += this.FinishedSpeedTests[i].downloadBytes;
-            UploadAVG += this.FinishedSpeedTests[i].uploadBytes;
-            PingAVG += this.FinishedSpeedTests[i].ping;
+
+        /**
+         *
+         * Download Chart
+         *
+         */
+
+        _this.DownloadData = new google.visualization.DataTable();
+        _this.DownloadData.addColumn('date', 'Time');
+        _this.DownloadData.addColumn('number', 'Speed');
+        const DLArray = [];
+        for (let i = 0; i < _this.FinishedSpeedTests.length; i++) {
+            DLArray.push([moment(_this.FinishedSpeedTests[i].createdAt).toDate(), parseFloat((_this.FinishedSpeedTests[i].downloadBytes / (1000 * 1000)).toFixed(2))]);
         }
-        this.AVG = {
-            Download: DownloadAVG / this.FinishedSpeedTests.length,
-            Upload: UploadAVG / this.FinishedSpeedTests.length,
-            Ping: PingAVG / this.FinishedSpeedTests.length
-        };
-        this.labels = labels;
-        this.Download = Download;
-        this.Upload = Upload;
-        this.Ping = Ping;
+        _this.DownloadData.addRows(DLArray);
+
+        /**
+         *
+         * Upload Chart
+         *
+         */
+
+        _this.UploadData = new google.visualization.DataTable();
+        _this.UploadData.addColumn('date', 'Time');
+        _this.UploadData.addColumn('number', 'Speed');
+        const UPArray = [];
+        for (let i = 0; i < _this.FinishedSpeedTests.length; i++) {
+            UPArray.push([moment(_this.FinishedSpeedTests[i].createdAt).toDate(), parseFloat((_this.FinishedSpeedTests[i].uploadBytes / (1000 * 1000)).toFixed(2))]);
+        }
+        _this.UploadData.addRows(UPArray);
+
+        /**
+         *
+         * Ping Chart
+         *
+         */
+
+        _this.PingData = new google.visualization.DataTable();
+        _this.PingData.addColumn('date', 'Time');
+        _this.PingData.addColumn('number', 'Time');
+        const PIArray = [];
+        for (let i = 0; i < _this.FinishedSpeedTests.length; i++) {
+            PIArray.push([moment(_this.FinishedSpeedTests[i].createdAt).toDate(), _this.FinishedSpeedTests[i].ping]);
+        }
+        _this.PingData.addRows(PIArray);
+
+        /**
+         *
+         * Last Download Gauge
+         * Last Upload Gauge
+         * Last Ping Gauge
+         *
+         */
+
+        _this.LastDownloadGaugeData = google.visualization.arrayToDataTable([
+            ['Label', 'Value'],
+            ['Download', _this.FinishedSpeedTests.length > 0 ? parseFloat((_this.FinishedSpeedTests[_this.FinishedSpeedTests.length - 1].downloadBytes / (1000 * 1000)).toFixed(2)) : 0]
+        ]);
+        for (let i = 5; i < Number.MAX_SAFE_INTEGER; i + 5){
+            if (_this.FinishedSpeedTests.length > 0 ? parseFloat((_this.FinishedSpeedTests[_this.FinishedSpeedTests.length - 1].downloadBytes / (1000 * 1000)).toFixed(2)) : 0 < i){
+                _this.LastDownloadGaugeMax = i;
+                break;
+            }
+        }
+        if (!_this.LastDownloadGaugeMax){
+            _this.LastDownloadGaugeMax = Number.MAX_SAFE_INTEGER;
+        }
+
+        _this.LastUploadGaugeData = google.visualization.arrayToDataTable([
+            ['Label', 'Value'],
+            ['Upload', _this.FinishedSpeedTests.length > 0 ? parseFloat((_this.FinishedSpeedTests[_this.FinishedSpeedTests.length - 1].uploadBytes / (1000 * 1000)).toFixed(2)) : 0]
+        ]);
+        for (let i = 5; i < Number.MAX_SAFE_INTEGER; i + 5){
+            if (_this.FinishedSpeedTests.length > 0 ? parseFloat((_this.FinishedSpeedTests[_this.FinishedSpeedTests.length - 1].uploadBytes / (1000 * 1000)).toFixed(2)) : 0 < i){
+                _this.LastUploadGaugeMax = i;
+                break;
+            }
+        }
+        if (!_this.LastUploadGaugeMax){
+            _this.LastUploadGaugeMax = Number.MAX_SAFE_INTEGER;
+        }
+
+        _this.LastPingGaugeData = google.visualization.arrayToDataTable([
+            ['Label', 'Value'],
+            ['Ping', _this.FinishedSpeedTests.length > 0 ? _this.FinishedSpeedTests[_this.FinishedSpeedTests.length - 1].ping : -1]
+        ]);
+        for (let i = 100; i < Number.MAX_SAFE_INTEGER; i + 5){
+            if (_this.FinishedSpeedTests.length > 0 ? _this.FinishedSpeedTests[_this.FinishedSpeedTests.length - 1].ping : -1 < i){
+                _this.LastPingGaugeMax = i;
+                break;
+            }
+        }
+        if (!_this.LastPingGaugeMax){
+            _this.LastPingGaugeMax = Number.MAX_SAFE_INTEGER;
+        }
+
+        /**
+         *
+         * LastDate
+         *
+         */
+
+        _this.LastDate = moment(_this.FinishedSpeedTests.length > 0 ? _this.FinishedSpeedTests[_this.FinishedSpeedTests.length - 1].createdAt : 0).format("dd Do MMM kk:mm");
     };
 });
 
@@ -132,195 +194,127 @@ app.controller('loading', function ($scope, Socket, $state, $rootScope) {
     }
 });
 
-app.controller('home', function ($scope, Socket, $rootScope, $state) {
+app.controller('home', function ($scope, Socket, $rootScope, $state, $window) {
     if (!Socket.Data) {
         $state.go('loading');
         return;
     }
-    $scope.safeApply = function(fn) {
+    $scope.safeApply = function (fn) {
         var phase = this.$root.$$phase;
-        if(phase == '$apply' || phase == '$digest') {
-            if(fn && (typeof(fn) === 'function')) {
+        if (phase == '$apply' || phase == '$digest') {
+            if (fn && (typeof(fn) === 'function')) {
                 fn();
             }
         } else {
             this.$apply(fn);
         }
     };
-    const DLch = new Chartist.Line('#DownloadChart', {
-        labels: Socket.labels,
-        series: [Socket.Download]
-    }, {
-        axisX: {
-            showLabel: false,
-            showGrid: false
-        },
-        plugins: [
-        ]
-    });
-    const UPch = new Chartist.Line('#UploadChart', {
-        labels: Socket.labels,
-        series: [Socket.Upload]
-    }, {
-        axisX: {
-            showLabel: false,
-            showGrid: false
-        },
-        plugins: [
-        ]
-    });
-    const Pingch = new Chartist.Line('#PingChart', {
-        labels: Socket.labels,
-        series: [Socket.Ping]
-    }, {
-        axisX: {
-            showLabel: false,
-            showGrid: false
-        },
-        plugins: [
-        ]
-    });
-    const LastDownloadChart = new Chartist.Pie('#LastDownloadChart', {
-        series: [Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].value || 0 ],
-        labels: ['']
-    }, {
-        donut: true,
-        donutWidth: 20,
-        startAngle: 210,
-        total: Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].value < 5 ? 5 : 125,
-        showLabel: false,
-        plugins: [
-            Chartist.plugins.fillDonut({
-                items: [{
-                    content: '<i class="fa fa-tachometer"></i>',
-                    position: 'bottom',
-                    offsetY : 10,
-                    offsetX: -2
-                }, {
-                    content: '<h3 id="LastDownloadChartH3">'+ Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].meta || 0 +'</h3>'
-                }]
-            })
-        ],
-    });
-    const LastUploadChart = new Chartist.Pie('#LastUploadChart', {
-        series: [Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].value || 0 ],
-        labels: ['']
-    }, {
-        donut: true,
-        donutWidth: 20,
-        startAngle: 210,
-        total: Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].value < 5 ? 5 : 125,
-        showLabel: false,
-        plugins: [
-            Chartist.plugins.fillDonut({
-                items: [{
-                    content: '<i class="fa fa-tachometer"></i>',
-                    position: 'bottom',
-                    offsetY : 10,
-                    offsetX: -2
-                }, {
-                    content: '<h3 id="LastUploadChartH3">'+ Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].meta || 0 +'</h3>'
-                }]
-            })
-        ],
-    });
-    const AVGDownloadChart = new Chartist.Pie('#AVGDownloadChart', {
-        series: [Socket.AVG.Download || 0 ],
-        labels: ['']
-    }, {
-        donut: true,
-        donutWidth: 20,
-        startAngle: 210,
-        total: Socket.AVG.Download <= 5242880 ? 5242880 : 131072000, //5242880
-        showLabel: false,
-        plugins: [
-            Chartist.plugins.fillDonut({
-                items: [{
-                    content: '<i class="fa fa-tachometer"></i>',
-                    position: 'bottom',
-                    offsetY : 10,
-                    offsetX: -2
-                }, {
-                    content: '<h3 id="AVGDownloadChartH3">'+ prettierBytes(Socket.AVG.Download) || 0 +'</h3>'
-                }]
-            })
-        ],
-    });
-    const AVGUploadChart = new Chartist.Pie('#AVGUploadChart', {
-        series: [Socket.AVG.Upload || 0 ],
-        labels: ['']
-    }, {
-        donut: true,
-        donutWidth: 20,
-        startAngle: 210,
-        total: Socket.AVG.Upload <= 5242880 ? 5242880 : 131072000, //5242880
-        showLabel: false,
-        plugins: [
-            Chartist.plugins.fillDonut({
-                items: [{
-                    content: '<i class="fa fa-tachometer"></i>',
-                    position: 'bottom',
-                    offsetY : 10,
-                    offsetX: -2
-                }, {
-                    content: '<h3 id="AVGUploadChartH3">'+ prettierBytes(Socket.AVG.Upload) || 0 +'</h3>'
-                }]
-            })
-        ],
-    });
-    $scope.AVGPing = Socket.AVG.Ping.toFixed(2);
-    $scope.LastPing = Socket.Ping[Socket.Ping.length > 0 ? Socket.Ping.length - 1 : 0].value || 0;
-    let d = new Date(Socket.labels[Socket.labels.length > 0 ? Socket.labels.length - 1 : 0] || 0);
-    $scope.LastTest = moment(d).format("DD MMM YYYY kk:mm");
-    $scope.safeApply();
-    $rootScope.$on('updateChart', () => {
-        DLch.update({
-            labels: Socket.labels,
-            series: [Socket.Download]
-        });
-        UPch.update({
-            labels: Socket.labels,
-            series: [Socket.Upload]
-        });
-        Pingch.update({
-            labels: Socket.labels,
-            series: [Socket.Ping]
-        });
-
-        $scope.updateChart(LastDownloadChart, {
-            series: [Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].value || 0 ],
-            labels: ['']
-        }, {total: Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].value < 5 ? 5 : 125}, "LastDownloadChartH3", Socket.Download[Socket.Download.length > 0 ? Socket.Download.length - 1 : 0].meta || 0);
-
-        $scope.updateChart(LastUploadChart, {
-            series: [Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].value || 0 ],
-            labels: ['']
-        }, {total: Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].value < 5 ? 5 : 125}, "LastUploadChartH3", Socket.Upload[Socket.Upload.length > 0 ? Socket.Upload.length - 1 : 0].meta || 0);
-
-        $scope.updateChart(AVGDownloadChart, {
-            series: [Socket.AVG.Download || 0 ],
-            labels: ['']
-        }, {total: Socket.AVG.Download <= 5242880 ? 5242880 : 131072000}, "AVGDownloadChartH3", prettierBytes(Socket.AVG.Download) || 0);
-
-        $scope.updateChart(AVGUploadChart, {
-            series: [Socket.AVG.Upload || 0 ],
-            labels: ['']
-        }, {total: Socket.AVG.Upload <= 5242880 ? 5242880 : 131072000}, "AVGUploadChartH3", prettierBytes(Socket.AVG.Upload) || 0);
-
-        $scope.LastPing = Socket.Ping[Socket.Ping.length > 0 ? Socket.Ping.length - 1 : 0].value || 0;
-        let d = new Date(Socket.labels[Socket.labels.length > 0 ? Socket.labels.length - 1 : 0] || 0);
-        $scope.LastTest = moment(d).format("DD MMM YYYY kk:mm");
-        $scope.AVGPing = Socket.AVG.Ping.toFixed(2);
-        $scope.safeApply();
-        console.log("Chart updated.");
-    });
-
-    $scope.updateChart = function (Chart, Data, options, H3ID, H3) {
-        Chart.update(Data, options, true);
-        if (H3 && H3ID){
-            document.getElementById(H3ID).innerHTML = H3;
+    $window.onresize = function () {
+        if ($scope.rsto){
+            clearTimeout($scope.rsto);
         }
+        const windowHeight = window.innerHeight,windowWidth  = window.innerWidth;
+        $scope.rsto = setTimeout(function () {
+            const newwindowHeight = window.innerHeight,newwindowWidth  = window.innerWidth;
+            if (windowHeight == newwindowHeight && windowWidth == newwindowWidth){
+                console.log("Redraw!");
+                $scope.drawCharts();
+            } else {
+                console.log("Not the same");
+            }
+        }, 1000);
+        //$scope.drawCharts();
     };
+
+    $rootScope.$on('updateChart', () => {
+        $scope.drawCharts();
+    });
+
+    const DLChart = new google.charts.Line(document.getElementById('DLChart'));
+    const UPChart = new google.charts.Line(document.getElementById('UPChart'));
+    const PIChart = new google.charts.Line(document.getElementById('PIChart'));
+    const LastDownloadGauge = new google.visualization.Gauge(document.getElementById('LastDownloadGauge'));
+    const LastUploadGauge = new google.visualization.Gauge(document.getElementById('LastUploadGauge'));
+    const LastPingGauge = new google.visualization.Gauge(document.getElementById('LastPingGauge'));
+
+    $scope.drawCharts = function () {
+        $scope.safeApply(() => {
+            $scope.LastDate = Socket.LastDate;
+            DLChart.draw(Socket.DownloadData, google.charts.Line.convertOptions({
+                chart: {
+                    title: 'Download',
+                    subtitle: 'in MB/s'
+                },
+                chartArea: {
+                    backgroundColor: "transparent"
+                },
+                animation: {
+                    duration: 1000,
+                    startup: true
+                },
+                legend: {
+                    position: "none"
+                },
+                backgroundColor: "transparent",
+                curveType: 'function',
+                explorer: {
+                    actions: ['dragToZoom', 'rightClickToReset'],
+                    maxZoomIn: 10
+                }
+            }));
+            UPChart.draw(Socket.UploadData, google.charts.Line.convertOptions({
+                chart: {
+                    title: 'Upload',
+                    subtitle: 'in MB/s'
+                },
+                chartArea: {
+                    backgroundColor: "transparent"
+                },
+                animation: {
+                    duration: 1000,
+                    startup: true
+                },
+                legend: {
+                    position: "none"
+                },
+                backgroundColor: "transparent",
+                curveType: 'function',
+                explorer: {
+                    actions: ['dragToZoom', 'rightClickToReset'],
+                    maxZoomIn: 10
+                }
+            }));
+            PIChart.draw(Socket.PingData, google.charts.Line.convertOptions({
+                chart: {
+                    title: 'Ping',
+                    subtitle: 'in ms'
+                },
+                chartArea: {
+                    backgroundColor: "transparent"
+                },
+                animation: {
+                    duration: 1000,
+                    startup: true
+                },
+                legend: {
+                    position: "none"
+                },
+                backgroundColor: "transparent",
+                curveType: 'function',
+                explorer: {
+                    actions: ['dragToZoom', 'rightClickToReset'],
+                    maxZoomIn: 10
+                }
+            }));
+            LastDownloadGauge.draw(Socket.LastDownloadGaugeData, {max: Socket.LastDownloadGaugeMax});
+            LastUploadGauge.draw(Socket.LastUploadGaugeData, {max: Socket.LastUploadGaugeMax});
+            LastPingGauge.draw(Socket.LastPingGaugeData, {max: Socket.LastPingGaugeMax});
+            $scope.safeApply();
+        });
+    };
+
+
+    $scope.drawCharts();
 
     $scope.openMenu = function ($mdMenu, ev) {
         $mdMenu.open(ev);
