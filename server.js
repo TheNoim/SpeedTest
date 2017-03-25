@@ -65,7 +65,11 @@ if (isDeveloping) {
             modules: false
         }
     });
-
+    app.use(compression({
+        threshold: 0, filter: function () {
+            return true;
+        }
+    }));
     app.use(middleware);
     app.use(webpackHotMiddleware(compiler));
     app.get('*', function response(req, res) {
@@ -73,13 +77,17 @@ if (isDeveloping) {
         res.end();
     });
 } else {
+    app.use(compression({
+        threshold: 0, filter: function () {
+            return true;
+        }
+    }));
     app.use(express.static(__dirname + '/dist'));
     app.get('*', function response(req, res) {
         res.sendFile(path.join(__dirname, 'dist/index.html'));
     });
 }
 
-app.use(compression());
 
 function test() {
     const id = uuid.v1();
