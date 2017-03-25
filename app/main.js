@@ -11,9 +11,12 @@ import io from 'socket.io-client';
 
 import moment from 'moment';
 
-import prettierBytes from 'prettier-bytes';
+window.moment = moment;
 
-const app = angular.module('SpeedTest', [ngMaterial, uiRouter]);
+import 'ng-material-datetimepicker/dist/angular-material-datetimepicker.min';
+import "ng-material-datetimepicker/dist/material-datetimepicker.min.css";
+
+const app = angular.module('SpeedTest', [ngMaterial, uiRouter, 'ngMaterialDatePicker']);
 
 app.controller('Main', function ($scope, Socket) {
 
@@ -27,8 +30,9 @@ app.service('Socket', function ($rootScope, $mdToast) {
             console.log(`New speedtest result.`);
             $mdToast.showSimple("Added new speedtest result!");
             console.log(payload.doc);
-            this.FinishedSpeedTests.push(payload.doc);
-            this.FinishedSpeedTests = this.FinishedSpeedTests.sortByDateGetBiggerGerman();
+            this.OriginalFinishedSpeedTest.push(payload.doc);
+            this.OriginalFinishedSpeedTest = this.OriginalFinishedSpeedTest.sortByDateGetBiggerGerman();
+            this.FinishedSpeedTests = OriginalFinishedSpeedTest;
             this.makeChartData();
             this.updateChart();
 
@@ -51,6 +55,7 @@ app.service('Socket', function ($rootScope, $mdToast) {
             }
         }
         _this.FinishedSpeedTests = _this.FinishedSpeedTests.sortByDateGetBiggerGerman();
+        _this.OriginalFinishedSpeedTest = _this.FinishedSpeedTests;
         console.log(payload);
         console.log(_this.FinishedSpeedTests);
         google.charts.load('current', {'packages': ['line', 'gauge']});
@@ -67,6 +72,16 @@ app.service('Socket', function ($rootScope, $mdToast) {
         $rootScope.$emit('createChart');
     };
     this.makeChartData = function () {
+
+        if (_this.Start || (_this.End && _this.Start)){
+            _this.FinishedSpeedTests = [];
+            for (let i = 0; i < _this.OriginalFinishedSpeedTest.length; i++){
+                if (moment(_this.OriginalFinishedSpeedTest[i].createdAt).isBetween(_this.Start, _this.End || moment())){
+                    _this.FinishedSpeedTests.push(_this.OriginalFinishedSpeedTest[i]);
+                }
+            }
+            _this.FinishedSpeedTests = _this.FinishedSpeedTests.sortByDateGetBiggerGerman();
+        }
 
         /**
          *
@@ -194,7 +209,7 @@ app.controller('loading', function ($scope, Socket, $state, $rootScope) {
     }
 });
 
-app.controller('home', function ($scope, Socket, $rootScope, $state, $window) {
+app.controller('home', function ($scope, Socket, $rootScope, $state, $window, mdcDateTimeDialog) {
     if (!Socket.Data) {
         $state.go('loading');
         return;
@@ -224,6 +239,20 @@ app.controller('home', function ($scope, Socket, $rootScope, $state, $window) {
             }
         }, 1000);
         //$scope.drawCharts();
+    };
+
+    $scope.DisplayTime = function (what) {
+        mdcDateTimeDialog.show({
+            time: true
+        }).then(date => {
+            Socket[what] = date;
+            Socket.makeChartData();
+            Socket.updateChart();
+        }).catch(() => {
+            Socket[what] = null;
+            Socket.makeChartData();
+            Socket.updateChart();
+        });
     };
 
     $rootScope.$on('updateChart', () => {

@@ -6,7 +6,33 @@
         <div id="LastUploadGauge"></div>
         <div id="LastPingGauge"></div>
     </div>
-    <h1>All Data</h1>
+    <div style="width: 100%;" layout="row" layout-align="space-between">
+        <span flex="33"></span>
+        <div flex="33" layout="row" layout-align="center center">
+            <h1>All Data</h1>
+        </div>
+        <div flex="33" layout="row" layout-align="end center">
+            <md-menu>
+                <md-button class="md-icon-button" ng-click="$mdMenu.open($event)">
+                    <md-icon>settings</md-icon>
+                </md-button>
+                <md-menu-content width="4">
+                    <md-menu-item>
+                        <md-button ng-click="DisplayTime('Start')">
+                            <md-icon>alarm</md-icon>
+                            Set start time
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button ng-click="DisplayTime('End')">
+                            <md-icon>alarm</md-icon>
+                            Set end time
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </div>
+    </div>
     <div flex="auto" style="width: 100%; min-height: 350px;">
         <div id="DLChart" style="width: 100%; height: 350px!important;"></div>
     </div>

@@ -77,15 +77,15 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
-angular-animate@^1.6.3:
+angular-animate@^1.5.10, angular-animate@^1.6.3:
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.6.3.tgz#d228a14f47a4e50bea44ed15bbc4651d44d194f5"
 
-angular-aria@^1.6.3:
+angular-aria@^1.5.10, angular-aria@^1.6.3:
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/angular-aria/-/angular-aria-1.6.3.tgz#8143d2fdf1622408cc669509673599acd85c586c"
 
-angular-material@^1.1.3:
+angular-material@^1.1.1, angular-material@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/angular-material/-/angular-material-1.1.3.tgz#b466d53aaa42c1555766a1ded53a28baeb7b2fe6"
 
@@ -95,7 +95,7 @@ angular-ui-router@^0.4.2:
   dependencies:
     angular "^1.0.8"
 
-angular@^1.0.8, angular@^1.6.3:
+angular@^1.0.8, angular@^1.5.10, angular@^1.6.3:
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.3.tgz#5d34b799234e8fa17c6a3a14e0258733935f43e7"
 
@@ -1095,14 +1095,6 @@ chartist-plugin-fill-donut@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/chartist-plugin-fill-donut/-/chartist-plugin-fill-donut-0.1.4.tgz#32adc032cc44e8e461cb6df26096ee1fc1854b27"
 
-chartist-plugin-pointlabels@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/chartist-plugin-pointlabels/-/chartist-plugin-pointlabels-0.0.4.tgz#255da9478bfc9a3a4ce6027682cfe229ab33a40d"
-
-chartist-plugin-tooltip@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/chartist-plugin-tooltip/-/chartist-plugin-tooltip-0.0.11.tgz#cec2195fa505f4d34e6d8e41a86bfbcb9bfff461"
-
 chartist@^0.10.1:
   version "0.10.1"
   resolved "https://registry.yarnpkg.com/chartist/-/chartist-0.10.1.tgz#3dd513d531dfca6b78e777fe0500d9c7e6406931"
@@ -2052,6 +2044,10 @@ expand-range@^1.8.1:
 expand-template@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/expand-template/-/expand-template-1.0.3.tgz#6c303323177a62b1b22c070279f7861287b69b1a"
+
+expose-loader@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/expose-loader/-/expose-loader-0.7.3.tgz#35fbd3659789e4faa81f59de8b7e9fc39e466d51"
 
 express@^4.13.3:
   version "4.14.1"
@@ -3115,10 +3111,6 @@ jstransform@~11.0.0:
     object-assign "^2.0.0"
     source-map "^0.4.2"
 
-jstz@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/jstz/-/jstz-1.0.9.tgz#e793ed659fe92f8fd0825e45b7207501e51c6c3f"
-
 kind-of@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.1.0.tgz#475d698a5e49ff5e53d14e3e732429dc8bf4cf47"
@@ -3637,7 +3629,7 @@ mocha@^2.3.3:
     supports-color "1.2.0"
     to-iso-string "0.0.2"
 
-moment@^2.18.0:
+moment@^2.17.1, moment@^2.18.0:
   version "2.18.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.0.tgz#6cfec6a495eca915d02600a67020ed994937252c"
 
@@ -3674,6 +3666,16 @@ ncp@0.4.x:
 negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
+
+ng-material-datetimepicker@^1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/ng-material-datetimepicker/-/ng-material-datetimepicker-1.5.10.tgz#f76405369adb4e2233319d538909b2eda354c156"
+  dependencies:
+    angular "^1.5.10"
+    angular-animate "^1.5.10"
+    angular-aria "^1.5.10"
+    angular-material "^1.1.1"
+    moment "^2.17.1"
 
 no-case@^2.2.0:
   version "2.3.1"
