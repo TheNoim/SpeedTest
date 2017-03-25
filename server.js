@@ -27,6 +27,8 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const config = require('./webpack.config.js');
 
+const compression = require('compression');
+
 const isDeveloping = process.env.NODE_ENV !== 'production';
 const port = isDeveloping ? 3000 : process.env.PORT ? process.env.PORT : 3000;
 const app = express();
@@ -76,6 +78,8 @@ if (isDeveloping) {
         res.sendFile(path.join(__dirname, 'dist/index.html'));
     });
 }
+
+app.use(compression());
 
 function test() {
     const id = uuid.v1();

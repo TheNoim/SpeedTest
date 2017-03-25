@@ -37,6 +37,7 @@
     "chartist": "^0.10.1",
     "chartist-plugin-fill-donut": "^0.1.4",
     "child-process-promise": "^2.2.0",
+    "compression": "^1.6.2",
     "debug": "^2.6.3",
     "expose-loader": "^0.7.3",
     "jquery": "^3.2.0",
