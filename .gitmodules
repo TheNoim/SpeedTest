@@ -1,0 +1,6 @@
+[submodule "submodules/pyinstaller"]
+	path = submodules/pyinstaller
+	url = https://github.com/pyinstaller/pyinstaller
+[submodule "submodules/clispeedtest"]
+	path = submodules/clispeedtest
+	url = https://github.com/sivel/speedtest-cli
