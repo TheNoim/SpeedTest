@@ -1,4 +1,5 @@
 # Speedtest stats
+# Note: Not maintained anymore. Plz don't use this. 
 This tool does every 5 minutes a speedtest and add it to a database.  
 You can seed the results in a webinterface which updates itself in realtime.
 
